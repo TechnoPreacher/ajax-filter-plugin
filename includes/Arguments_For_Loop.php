@@ -7,7 +7,6 @@ class Arguments_For_Loop
     public static function arguments(string $numOfEvents, string $typeofEvents): array
     {
 
-
         $dateNow = date_create('now');
         $dateNow = date_format($dateNow, "Y-m-d");
 

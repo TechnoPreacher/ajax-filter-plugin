@@ -2,14 +2,14 @@
 
 require_once 'Arguments_For_Loop.php';
 
-class event_widget extends WP_Widget
+class ajax_filter_widget extends WP_Widget
 {
     function __construct()
     {
         parent::__construct(
-            'event_widget',// widget ID
-            __('Визжит событий :-)', 'event-plugin'),// widget name
-            array('description' => __('Виджет событий для WordPress', 'event-plugin'),)// widget description
+            'ajax_filter_widget',// widget ID
+            __('Виджет фильтрациии записей', 'ajax-filter-plugin'),// widget name
+            array('description' => __('Виджет фильтрации записей для WP', 'ajax-filter-plugin'),)// widget description
         );
     }
 
@@ -22,8 +22,8 @@ class event_widget extends WP_Widget
             $typeofevents = $instance['typeofevents'];//ну и вид события оттуда же
 
             _e('СОБЫТИЯ', 'event-plugin');
-            _e(' ','event-plugin');
-            _e("[$numberofevents штук $typeofevents типа]",'event-plugin');
+        //    _e(' ','event-plugin');
+          //  _e("[$numberofevents штук $typeofevents типа]",'event-plugin');
 
 
             $loop = new WP_Query( Arguments_For_Loop::arguments($numberofevents,$typeofevents));
