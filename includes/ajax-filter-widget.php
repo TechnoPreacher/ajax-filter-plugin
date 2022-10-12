@@ -1,6 +1,6 @@
 <?php
 
-require_once 'Arguments_For_Loop.php';
+//require_once 'Arguments_For_Loop.php';
 
 class ajax_filter_widget extends WP_Widget
 {

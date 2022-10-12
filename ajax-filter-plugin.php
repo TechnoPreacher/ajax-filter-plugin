@@ -24,7 +24,7 @@ register_deactivation_hook(__FILE__, 'ajax_filter_plugin_deactivate');//убир
 //===============================================================================================
 
 include_once __DIR__ . '/includes/ajax-filter-widget.php';// Include WP_widget child class
-require_once __DIR__ . '/includes/Arguments_For_Loop.php';
+//require_once __DIR__ . '/includes/Arguments_For_Loop.php';
 
 function ajax_filter_plugin_loaded()
 {
