@@ -20,6 +20,11 @@ add_action('plugins_loaded', 'ajax_filter_plugin_loaded');//подключаем
 //add_action('save_post', 'my_extra_fields_update', 0); // включаем обновление полей при сохранении
 add_action('widgets_init', 'ajax_filter_register_widget');//прикручиваю виджет
 
+//AJAX
+add_action('wp_ajax_my_action', 'my_action_callback');
+add_action('wp_ajax_nopriv_my_action', 'my_action_callback');
+
+
 register_deactivation_hook(__FILE__, 'ajax_filter_plugin_deactivate');//убираю всё что сделал плагин
 //===============================================================================================
 
@@ -42,3 +47,32 @@ function ajax_filter_register_widget()
 {
     register_widget('ajax_filter_widget');
 }
+
+
+function my_action_callback()
+{
+	if (!isset($_POST)) {
+		echo(json_encode( ['status'=>'bad!' ]));
+		wp_die();
+	}
+	$title = $_POST['title'] ?? 0;
+
+	$title = $title+10;
+	echo(json_encode( array('status'=>'ok','request_vars'=>$_REQUEST, 'title'=>$title) ));
+	wp_die();
+}
+
+
+function js_variables(){
+	$variables = array (
+		'ajax_url' => admin_url('admin-ajax.php'),
+		'is_mobile' => wp_is_mobile()
+		// Тут обычно какие-то другие переменные
+	);
+	echo(
+	'<script type="text/javascript">window.wp_data = '.
+        json_encode($variables).
+        ';</script>'
+    );
+}
+add_action('wp_head','js_variables');
