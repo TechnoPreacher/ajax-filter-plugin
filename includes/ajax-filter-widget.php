@@ -18,6 +18,14 @@ class ajax_filter_widget extends WP_Widget {
 		$numberofposts = $instance['numberofposts'];
 		$ajax_url      = admin_url( 'admin-ajax.php' );//для обработчика аякса
 
+		$posts_cars = get_posts(
+			array(
+				'post_type' => 'cars',
+				'numberposts' => -1, //$instance['count'],
+			)
+		);
+
+
 		?>
         <form action="" method="">
 
