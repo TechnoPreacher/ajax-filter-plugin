@@ -2,7 +2,7 @@
 
 /*
  * Plugin Name: Ajax filter plugin
- * Description:  Позволяет ...
+ * Description:  Позволяет!
  * Version: 1.0
  * Text Domain: ajax-filter-plugin
  * Domain Path: /lang/
