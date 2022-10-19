@@ -1,4 +1,5 @@
 <?php
+
 /*
  * Plugin Name: Ajax filter plugin
  * Description:  Позволяет ...
@@ -11,23 +12,14 @@
  * Requires PHP: 7.4
 */
 
-
-//===ЦЕПЛЯЮ виджет, аякс, и возможность удаления к событиям ядра===
 add_action( 'plugins_loaded', 'ajax_filter_plugin_loaded' );//подключаем переводчик
 add_action( 'widgets_init', 'ajax_filter_register_widget' );//прикручиваю виджет
-
-//AJAX
-add_action( 'wp_ajax_my_action', 'my_action_callback' );
-add_action( 'wp_ajax_nopriv_my_action', 'my_action_callback' );
-
-//передача урла на фронт
-add_action( 'wp_head', 'js_variables' );
-
+add_action( 'wp_ajax_my_action', 'my_action_callback' );//AJAX для своих
+add_action( 'wp_ajax_nopriv_my_action', 'my_action_callback' );//AJAX для чужих
+add_action( 'wp_head', 'js_variables' );//передача урла аякса на фронт
 register_deactivation_hook( __FILE__, 'ajax_filter_plugin_deactivate' );//убираю всё что сделал плагин
-//===============================================================================================
 
 include_once __DIR__ . '/includes/ajax-filter-widget.php';// виджет
-
 
 function ajax_filter_plugin_loaded() {
 	wp_enqueue_script( 'JQuery' );//подлючаю ЖкКери
@@ -36,8 +28,7 @@ function ajax_filter_plugin_loaded() {
 	add_filter('posts_search', '__search_by_title_only', 500, 2);//активирую поиск по заголовку
 }
 
-
-function __search_by_title_only( $search, $wp_query )
+function __search_by_title_only( $search, $wp_query )//не моя!
 {
 	global $wpdb;
 	if(empty($search)) {
@@ -60,8 +51,6 @@ function __search_by_title_only( $search, $wp_query )
 	return $search;
 }
 
-
-
 function ajax_filter_plugin_deactivate() {
 	unregister_widget( 'ajax_filter_widget' );//убить виджет
 }
@@ -71,84 +60,67 @@ function ajax_filter_register_widget() {
 }
 
 function my_action_callback() {
-	if ( ! isset( $_POST ) ) {
+
+	if ( ! isset( $_POST ) ) {//если не пришли данные - вываливаемся
 		echo( json_encode( [ 'status' => 'bad!' ] ) );
 		wp_die();
 	}
+
 	$title    = $_POST['title'] ?? '';
 	$number   = $_POST['number'] ?? 0;
-	$fromdate = $_POST['fromdate'] ?? '';
+	$date = $_POST['fromdate'] ?? '';
 
-
-	//Query
-	if ($fromdate=='') {
-		$fromdate = date_create( 'now' );
-	//	$fromdate = date_format( $fromdate, "Y-m-d" );
-	} else
-	{$fromdate = date_create( $fromdate );}
-
-
-
-/*	$data = 	 array(
-		'after'  => array(
-			'year'  =>  date_format( $fromdate, "Y" ),
-			'month' => date_format( $fromdate, "m" ),
-			'day'   => date_format( $fromdate, "d" ),
-		),
-	);
-*/
 	$args2 = array(
 		'post_type'      => 'post',
 		'posts_per_page' => $number,
 		'orderby' => 'date',
 		'order'   => 'ASC',
 		's' => $title,
-		'date_query' =>  array(
-			'after'  => array(
-				'year'  =>  date_format( $fromdate, "Y" ),
-				'month' => date_format( $fromdate, "m" ),
-				'day'   => date_format( $fromdate, "d" ),
-			),
-		),
-
-
 	);
 
-	$res=[];
-
+	if ($date!='')//фильтрую по дате, если она задавалась
+	{
+		$fromdate = date_create( $date);//для удобства форматирования-извлечения сегментов
+		$args2['date_query'] =  array(
+		'after'  => array(
+			'year'  =>  date_format( $fromdate, "Y" ),
+			'month' => date_format( $fromdate, "m" ),
+			'day'   => date_format( $fromdate, "d" ),
+		),
+	);
+	}
 
 	$query = new WP_Query;
-	$my_posts = $query->query($args2);
-
-
+	$my_posts = $query->query($args2);//цикл с фильтарцией
 	foreach( $my_posts as $my_post ){
-
 		$a = [ 'id' => $my_post->ID,
 			'title' => $my_post->post_title,
 			'link' => get_permalink($my_post->ID),
 		];
-		$res[]=$a;
+		$posts[]=$a;//наполняю массив записей сведениями
 	}
 
-
-	$rr=[
-		'posts'=>$res,
+	$outputresult=[
+		'posts'=>$posts,
 	     'status'   => 'ok',
-	     'title'    => $title,
-	     'number'   => $number,
-	     'fromdate' => date_format( $fromdate, "Y-m-d" ),//$fromdate
+	//     'title'    => $title,
+	  //   'number'   => $number,
 	];
+/*
+	if ($date!='') {
+		$outputresult['fromdate'] = date_format( $fromdate, "Y-m-d" );
+	}
+*/
 
-	echo(json_encode($rr,JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK));
-	wp_reset_postdata();
-
+	echo(json_encode($outputresult,JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK));
+	wp_reset_postdata();//? не згаю нужно ли (скорее нет чем да)
 	wp_die();
 }
 
 //запихивает в скрипт переменную, содержащую урл для обращения к решателю Аякса
 function js_variables() {
 	$variables = array(
-		'ajax_url'  => admin_url( 'admin-ajax.php' )
+		'ajax_url'  => admin_url( 'admin-ajax.php' ) //путь к скрипту-обработчитку аякс-запросов
 	);
 	echo(
 		'<script type="text/javascript">window.wp_data = ' .

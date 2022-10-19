@@ -1,4 +1,4 @@
-## **плагин AJX FILTER v1.0**
+## **плагин AJAX FILTER v1.0**
 
 
 
