@@ -103,14 +103,7 @@ function my_action_callback() {
 	$outputresult=[
 		'posts'=>$posts,
 	     'status'   => 'ok',
-	//     'title'    => $title,
-	  //   'number'   => $number,
 	];
-/*
-	if ($date!='') {
-		$outputresult['fromdate'] = date_format( $fromdate, "Y-m-d" );
-	}
-*/
 
 	echo(json_encode($outputresult,JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK));
 	wp_reset_postdata();//? не згаю нужно ли (скорее нет чем да)
