@@ -20,8 +20,8 @@ class ajax_filter_widget extends WP_Widget {
 
 		$posts_cars = get_posts(
 			array(
-				'post_type' => 'cars',
-				'numberposts' => -1, //$instance['count'],
+				'post_type'   => 'cars',
+				'numberposts' => - 1, //$instance['count'],
 			)
 		);
 
@@ -37,13 +37,13 @@ class ajax_filter_widget extends WP_Widget {
                     border: 2px solid #ccc;
                     border-radius: 4px;
                     font-size: 16px;
-                  //  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='25' height='25' viewBox='0 0 25 25' fill-rule='evenodd'%3E%3Cpath d='M16.036 18.455l2.404-2.405 5.586 5.587-2.404 2.404zM8.5 2C12.1 2 15 4.9 15 8.5S12.1 15 8.5 15 2 12.1 2 8.5 4.9 2 8.5 2zm0-2C3.8 0 0 3.8 0 8.5S3.8 17 8.5 17 17 13.2 17 8.5 13.2 0 8.5 0zM15 16a1 1 0 1 1 2 0 1 1 0 1 1-2 0'%3E%3C/path%3E%3C/svg%3E");
-                //  background-image: url('16.gif');
+                / / background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='25' height='25' viewBox='0 0 25 25' fill-rule='evenodd'%3E%3Cpath d='M16.036 18.455l2.404-2.405 5.586 5.587-2.404 2.404zM8.5 2C12.1 2 15 4.9 15 8.5S12.1 15 8.5 15 2 12.1 2 8.5 4.9 2 8.5 2zm0-2C3.8 0 0 3.8 0 8.5S3.8 17 8.5 17 17 13.2 17 8.5 13.2 0 8.5 0zM15 16a1 1 0 1 1 2 0 1 1 0 1 1-2 0'%3E%3C/path%3E%3C/svg%3E");
+                / / background-image: url('16.gif');
                     background-color: white;
 
-					background-position: 10px 10px;
-					background-repeat: no-repeat;
-					padding: 12px 20px 12px 40px;
+                    background-position: 10px 10px;
+                    background-repeat: no-repeat;
+                    padding: 12px 20px 12px 40px;
 
                     transition: width 0.4s ease-in-out;
 
@@ -59,26 +59,34 @@ class ajax_filter_widget extends WP_Widget {
                 <p>
                     <label for="number"><?php _e( 'Number:', 'ajax-filter-plugin' ); ?></label>
                     <input id="number"
-                           name="number" type="text"
+                           name="number"
+                           type="text"
                            value="<?php echo esc_attr( $numberofposts ); ?>"/>
                 </p>
 
                 <p>
                     <label for="title"><?php _e( 'Title: ', 'ajax-filter-plugin' ); ?></label>
-                    <input id="title" class = "icoo" name="title" type="text" placeholder="Search.."/>
+                    <input id="title"
+                           class="icoo"
+                           name="title"
+                           type="text"
+                           placeholder="Search.."/>
                 </p>
 
                 <p>
-                    <label for="date"><?php _e( 'From date:', 'ajax-filter-plugin' ); ?></label>
-                    <input class="widefat" id="fromdate" name="fromdate" type="date"/>
+                    <label for="fromdate"><?php _e( 'From date:', 'ajax-filter-plugin' ); ?></label>
+                    <input id="fromdate"
+                           name="fromdate"
+                           type="date"/>
                 </p>
 
 
-              <!--  <div class="form-example">
-                    <input type="submit" value="Subscribe!">
-                </div>
-!-->
+                <!--  <div class="form-example">
+					  <input type="submit" value="Subscribe!">
+				  </div>
+  !-->
             </div>
+
 			<?php
 			//считал значение числа событий, введённое в админке в виджет
 			//  $typeofevents = $instance['numberofevents'];//ну и вид события оттуда же
@@ -94,6 +102,7 @@ class ajax_filter_widget extends WP_Widget {
 
 			//   while ($loop->have_posts()) : $loop->the_post();
 			?>
+
             <tr>
                 <td style=" border: 1px solid black">
 					<?php //the_title();
@@ -118,75 +127,69 @@ class ajax_filter_widget extends WP_Widget {
 
         <script>
 
+            var functionAjax = function () {
+                jQuery.ajax({
+                    type: "POST",
+                    url: window.wp_data.ajax_url,
 
-            jQuery(function ($) {
+                    data: {
+                        action: 'my_action',
+                        title: jQuery("#title").val(),
+                        fromdate: jQuery("#fromdate").val(),
+                        number: jQuery("#number").val(),
+                    },
 
-                //поиск по наименованию (по слову)====
-
-                $("#title").keypress(function (event) {
-
-                    if ((event.which == 32) || (event.which == 13)) {
-                        event.preventDefault();//отменяю ввод пробела
-
-                        $.ajax({
-                            type: "POST",
-                            url: window.wp_data.ajax_url,
-
-                            data: {
-                                action: 'my_action',
-                                /*    datatype: 'description',
-									datastart: $("#datastart").val(),
-								*/
-                                title: $("#title").val(),
-								/*	datasort: $("#datasort").val(),
-									diapazon: $("#diapazon").val(),
-									datadescription: $("#description").val(),
-									datatitle: $("#title").val()
-								 */
-                            },
-
-
-                            success: function (response) {
-
-                                let erros = JSON.parse(response);
-                                let trHTML2 = '';
-                                $.each(erros, function (i, item) {
-                                    trHTML2 += item + "\n";
-                                });
-                             //   alert(trHTML2);
-
-                                let jsonData = JSON.parse(response);
-                              //  let jso = JSON.parse(jsonData.rows);
-
-                                let trHTML3 = '<tbody id="tbody"> ';
-                            //    $.each(jso, function (i, item) {
-                              //      trHTML += '<tr><td>' + item.id + '</td><td>' + item.title + '</td><td>' +
-                                 //       item.description + '</td><td>' + item.authorname + '</td><td>' + item.postdate + '</td></tr>';
-                               // });
-                                trHTML3 += ' </tbody>';
-                                $('#tbody').replaceWith(trHTML3);
-
-                               $("#title").val(jsonData.title);
-
-
-
-                                jQuery( document.body ).trigger( 'post-load' );
-
-                            //    $("#datastart").val(jsonData.datastart);
-                              //  $("#datasort").val(jsonData.datasort);
-
-                            }
+                    success: function (response) {
+                        let erros = JSON.parse(response);
+                        let trHTML2 = '';
+                        jQuery.each(erros, function (i, item) {
+                            trHTML2 += item + "\n";
                         });
 
+//alert(trHTML2);
+                        let jsonData = JSON.parse(response);
+
+                        //можно этого и не делать, т.к. данные всё равно остаются на фронте!
+                        jQuery("#number").val(jsonData.number);
+                        jQuery("#title").val(jsonData.title);
+                        jQuery("#fromdate").val(jsonData.fromdate);
+
+
+
+                        let trHTML3 = '';
+                        jQuery.each(jsonData.posts, function (i, item) {
+                             trHTML3 += '<a class="wp-block-latest-posts__post-title"  href="' + item.link + '">' +
+                               item.title + '<br>';
+                       });
+
+                       //alert(trHTML3);
+
+
+                        jQuery(".wp-block-latest-posts__list.wp-block-latest-posts").css("border", "2px dashed blue");
+                        jQuery(".wp-block-latest-posts__list.wp-block-latest-posts").html(trHTML3);
+
                     }
-
                 });
+            }
 
+            jQuery(function ($) {
+                //множественный селектор и множественные события привязываются к одному хэндлеру!
+                $('#title,#fromdate,#number').on('keypress change', function (event) {
+                    //такая конструкция нужна чтоб в текстовых инпутах слать аякс только по слову/энтеру
+                    if ((this.id == 'title') || (this.id == 'number')) {
+                        if ((event.which == 32) || (event.which == 13)) {
+                            event.preventDefault();//отменяю ввод пробела для инпутов текста
+                            functionAjax(this);//запрашиваю фнукцию
+                        }
+                    } else {
+                        functionAjax(this);//сразу запрашиваю функкцию для инпута даты
+                    }
+                });
             });
 
-            jQuery( document.body ).on( 'post-load', function () {
-                // New content has been added to the page.
-            } );
+            //  jQuery( document.body ).on( 'post-load', function () {
+            // New content has been added to the page.
+            // } );
 
 
         </script>
