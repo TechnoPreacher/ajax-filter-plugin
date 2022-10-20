@@ -1,7 +1,6 @@
 let functionAjax = function () {
 
     jQuery.ajax({
-
         type: 'POST',
         url: window.ajax_filter_plugin.ajax_url,//тащу
 
@@ -25,7 +24,10 @@ let functionAjax = function () {
     });
 };
 
-jQuery(window).load(functionAjax());//надо для начальной фильтрации
+jQuery(function() {//надо для  первой фильтрации при открытии страницы и с подхватом значения из виджета!
+    //jQuery(window).load(functionAjax()) - а так даст пустоту!
+    functionAjax();
+});
 
 jQuery(function ($) {
     //множественный селектор и множественные события привязываются к одному хэндлеру!
