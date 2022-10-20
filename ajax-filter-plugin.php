@@ -14,8 +14,8 @@
 
 add_action( 'plugins_loaded', 'ajax_filter_plugin_loaded' );//подключаем переводчик
 add_action( 'widgets_init', 'ajax_filter_register_widget' );//прикручиваю виджет
-add_action( 'wp_ajax_my_action', 'ajax_filter_posts_query' );//AJAX для своих
-add_action( 'wp_ajax_nopriv_my_action', 'ajax_filter_posts_query' );//AJAX для чужих
+add_action( 'wp_ajax_filter_plugin', 'ajax_filter_posts_query' );//AJAX для своих
+add_action( 'wp_ajax_nopriv_filter_plugin', 'ajax_filter_posts_query' );//AJAX для чужих
 
 register_deactivation_hook( __FILE__, 'ajax_filter_plugin_deactivate' );//убираю всё что сделал плагин
 
