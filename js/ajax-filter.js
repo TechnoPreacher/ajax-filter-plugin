@@ -5,7 +5,7 @@ let functionAjax = function () {
         url: window.ajax_filter_plugin.ajax_url,//тащу
 
         data: {
-            action: 'my_action',
+            action: 'filter_plugin',// должно совпадать с add_action( 'wp_ajax_filter_plugin', 'ajax_filter_posts_query' ) !!!!
             title: jQuery('#title').val(),
             fromdate: jQuery('#fromdate').val(),
             number: jQuery('#number').val()
